@@ -1,5 +1,6 @@
 package TestelkaLessonTests;
 
+import TestelkaLessonTests.PageObjectModel.BaseTests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;

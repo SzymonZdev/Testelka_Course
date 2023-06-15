@@ -1,14 +1,19 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.PageObjectModel;
 
 import TestelkaLessonTests.BotPattern.ActionBot;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class BaseTests {
-    private WebDriver driver;
+    protected WebDriver driver;
+    protected WebDriverWait wait;
     protected ActionBot bot;
+    protected String baseUrl = "https://localhost:8080";
 
     @BeforeEach
     public void setup() {
@@ -19,6 +24,7 @@ public class BaseTests {
         //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         String baseUrl = "http://localhost:8080";
         bot = new ActionBot(driver, baseUrl);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 
 //    @BeforeEach

@@ -1,9 +1,8 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.PageObjectModel;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class CheckoutTests extends BaseTests {

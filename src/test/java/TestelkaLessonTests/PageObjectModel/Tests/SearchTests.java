@@ -1,4 +1,4 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.PageObjectModel;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

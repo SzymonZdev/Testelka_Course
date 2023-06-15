@@ -1,4 +1,4 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.PageObjectModel;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,27 @@ public class CartTests  extends BaseTests{
     private final By addToCartButtonLocator = By.name("add-to-cart");
     private final By updateCartButtonLocator = By.name("update_cart");
     private final String chemicalAnalysisSlug = "the-elements-of-qualitative-chemical-analysis-vol-1-parts-1-and-2-by-stieglitz/";
+    private final String calculusSlug = "/calculus-made-easy-by-silvanus-p-thompson/";
     private final String historyOfAstronomySlug = "a-popular-history-of-astronomy-during-the-nineteenth-century-by-agnes-m-clerke/";
+
+    @Test
+    public void no_product_added_to_cart_should_cart_be_empty() {
+        CartPage cartPage = new CartPage(driver);
+        cartPage.go();
+
+        Assertions.assertEquals(0, cartPage.getNumberOfProducts(), "Number of products in cart is not 0.");
+    }
+
+    @Test
+    public void product_added_to_cart_should_cart_have_one_product() {
+        ProductPage productPage = new ProductPage(driver);
+        CartPage cartPage = productPage.go(calculusSlug).addToCart().goToCart();
+
+        int numberOfProducts = cartPage.getNumberOfProducts();
+        Assertions.assertEquals(1, numberOfProducts,
+                "Expected number of products in cart: 1" +
+                        "\nActual: " + numberOfProducts);
+    }
 
     @Test
     public void cart_not_changed_should_update_button_disabled() {
