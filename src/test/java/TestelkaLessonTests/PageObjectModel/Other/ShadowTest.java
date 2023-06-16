@@ -1,6 +1,6 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.PageObjectModel.Other;
 
-import TestelkaLessonTests.PageObjectModel.BaseTests;
+import TestelkaLessonTests.PageObjectModel.Tests.BaseTests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;

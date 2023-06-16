@@ -1,4 +1,4 @@
-package TestelkaLessonTests.PageObjectModel;
+package TestelkaLessonTests.PageObjectModel.Tests;
 
 import TestelkaLessonTests.BotPattern.ActionBot;
 import org.junit.jupiter.api.*;
