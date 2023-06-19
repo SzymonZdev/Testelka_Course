@@ -1,6 +1,6 @@
 package TestelkaLessonTests.PageObjectModel.other;
 
-import TestelkaLessonTests.PageObjectModel.Tests.BaseTests;
+import TestelkaLessonTests.PageObjectModel.tests.BaseTests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -14,9 +14,9 @@ public class ShadowTests extends BaseTests {
 
     @Test
     public void shadow_DOM_example_chrome_edge_tests() {
-        driver.get("https://fakestore.testelka.pl/shadow-dom-w-selenium/");
+        browser.driver.get("https://fakestore.testelka.pl/shadow-dom-w-selenium/");
 
-        WebElement shadowHost = driver.findElement(By.cssSelector("#host"));
+        WebElement shadowHost = browser.driver.findElement(By.cssSelector("#host"));
         SearchContext shadowRoot = shadowHost.getShadowRoot();
         shadowRoot.findElement(By.cssSelector("#input")).sendKeys("Hello there!");
         shadowRoot.findElement(By.cssSelector("button")).click();
@@ -28,11 +28,11 @@ public class ShadowTests extends BaseTests {
 
     @Test
     public void shadow_DOM_example_firefox_test() {
-        driver.get("https://fakestore.testelka.pl/shadow-dom-w-selenium/");
+        browser.driver.get("https://fakestore.testelka.pl/shadow-dom-w-selenium/");
 
-        WebElement shadowHost = driver.findElement(By.cssSelector("#host"));
+        WebElement shadowHost = browser.driver.findElement(By.cssSelector("#host"));
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+        JavascriptExecutor js = (JavascriptExecutor) browser.driver;
 
         List<WebElement> elements = (List<WebElement>) js.executeScript("return arguments[0].shadowRoot.children", shadowHost);
 

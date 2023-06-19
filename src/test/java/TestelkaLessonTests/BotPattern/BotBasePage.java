@@ -13,7 +13,7 @@ public class BotBasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected ActionBot bot;
-    protected String baseURL = "http://localhost:8080";
+    protected String baseURL = "http://vps-6191b6eb.vps.ovh.net:8080/";
 
     @BeforeEach
     public void setup() {

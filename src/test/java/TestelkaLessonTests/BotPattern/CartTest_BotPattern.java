@@ -1,4 +1,4 @@
-package TestelkaLessonTests;
+package TestelkaLessonTests.BotPattern;
 
 import TestelkaLessonTests.BotPattern.BotBasePage;
 import org.junit.jupiter.api.Assertions;

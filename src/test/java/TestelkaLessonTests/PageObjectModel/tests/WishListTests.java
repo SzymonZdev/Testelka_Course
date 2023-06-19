@@ -19,7 +19,6 @@ public class WishListTests extends BaseTests{
     @Test
     public void no_product_added_to_wishlist_should_wishlist_be_empty() {
         MainPage mainPage = new MainPage(browser);
-        TestelkaLessonTests.PageObjectModel.Pages.WishlistPage wishlistPage = mainPage.go().storeHeader.goToWishlist();
+        mainPage.go().storeHeader.goToWishlist();
     }
-
 }
