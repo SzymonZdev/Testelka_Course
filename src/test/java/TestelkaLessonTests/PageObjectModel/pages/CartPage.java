@@ -1,21 +1,38 @@
 package TestelkaLessonTests.PageObjectModel;
 
+import TestelkaLessonTests.PageObjectModel.helpers.Browser;
+import TestelkaLessonTests.PageObjectModel.pages.BasePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class CartPage {
-    private final WebDriver driver;
-    private final By productItem = By.cssSelector("tr.cart_item"); // Get number of products (rows)
-    public CartPage(WebDriver driver) {
-        this.driver = driver;
+public class CartPage extends BasePage {
+    private By productItem = By.cssSelector("tr.cart_item");
+    private By quantityField = By.cssSelector("input.qty");
+    private By updateCartButton = By.cssSelector("[name=update_cart]");
+    private By totalPrice = By.cssSelector("[data-title=Total]");
+    public CartPage(Browser browser) {
+        super(browser);
     }
 
-    public void go() {
-        String baseUrl = "http://localhost:8080";
-        driver.get(baseUrl + "/cart/");
+    public CartPage go() {
+        driver.get(baseURL + "/cart/");
+        return this;
     }
 
     public int getNumberOfProducts() {
         return driver.findElements(productItem).size();
+    }
+
+    public CartPage changeQuantity(int quantity) {
+        driver.findElement(quantityField).clear();
+        driver.findElement(quantityField).sendKeys(String.valueOf(quantity));
+        driver.findElement(updateCartButton).click();
+
+        waitForLoadingIconDisappear();
+        return this;
+    }
+
+    public String getTotalPrice() {
+        return driver.findElement(totalPrice).getText();
     }
 }

@@ -1,30 +1,41 @@
-package TestelkaLessonTests.PageObjectModel;
+package TestelkaLessonTests.PageObjectModel.pages;
 
+import TestelkaLessonTests.PageObjectModel.helpers.Browser;
+import TestelkaLessonTests.PageObjectModel.pages.BasePage;
+import TestelkaLessonTests.PageObjectModel.pages.StoreHeaderComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class ProductPage {
-    private final WebDriver driver;
-    private final By addToCartLocator = By.cssSelector("[name='add-to-cart']");
-    private final By goToCartLocator = By.cssSelector(".woocommerce-message>.button");
+public class ProductPage extends BasePage {
+    private By addToCart = By.cssSelector("[name=add-to-cart]");
+    private By goToCart = By.cssSelector(".woocommerce-message>.button");
+    private By addToWishlist = By.cssSelector("a.add_to_wishlist");
 
-    public ProductPage(WebDriver driver) {
-        this.driver = driver;
+    public final StoreHeaderComponent storeHeader;
+
+    public ProductPage(Browser browser) {
+        super(browser);
+        storeHeader = new StoreHeaderComponent(browser);
     }
 
     public ProductPage go(String productSlug) {
-        String baseUrl = "http://localhost:8080";
-        driver.get(baseUrl + "/product/" + productSlug);
+        driver.get(baseURL + "/product/" + productSlug);
         return this;
     }
 
     public ProductPage addToCart() {
-        driver.findElement(addToCartLocator).click();
+        driver.findElement(addToCart).click();
         return this;
     }
 
-    public CartPage goToCart() {
-        driver.findElement(goToCartLocator).click();
-        return new CartPage(driver);
+    public TestelkaLessonTests.PageObjectModel.CartPage goToCart() {
+        driver.findElement(goToCart).click();
+        return new TestelkaLessonTests.PageObjectModel.CartPage(browser);
+    }
+
+    public ProductPage addToWishlist() {
+        driver.findElement(addToWishlist).click();
+        waitForLoadingIconDisappear();
+        return this;
     }
 }

@@ -1,5 +1,6 @@
 package TestelkaLessonTests;
 
+import TestelkaLessonTests.BotPattern.BotBasePage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class CartTest_BotPattern extends BaseTests{
+public class CartTest_BotPattern extends BotBasePage {
         private final By addToCartButtonLocator = By.name("add-to-cart");
         private final String addToCartButtonSelector = "[name='add-to-cart']";
         private final String gotToCartFromProductButtonLocator = ".woocommerce-message>.button";
@@ -55,18 +56,18 @@ public class CartTest_BotPattern extends BaseTests{
 
         @Test
         public void cart_not_changed_should_update_button_disabled() {
-            driver.get(baseUrl + "/product/" + chemicalAnalysisSlug);
+            driver.get(baseURL + "/product/" + chemicalAnalysisSlug);
             driver.findElement(addToCartButtonLocator).click();
-            driver.get(baseUrl + "/cart");
+            driver.get(baseURL + "/cart");
             WebElement updateButton = driver.findElement(updateCartButtonLocator);
             Assertions.assertFalse(updateButton.isEnabled(), "Update button is enabled when it shouldn't, as no changes were made in the cart.");
         }
 
         @Test
         public void update_quantity_in_cart_should_update_total_price() {
-            driver.get(baseUrl + "/product/" + chemicalAnalysisSlug);
+            driver.get(baseURL + "/product/" + chemicalAnalysisSlug);
             driver.findElement(addToCartButtonLocator).click();
-            driver.get(baseUrl + "/cart");
+            driver.get(baseURL + "/cart");
             WebElement quantityField = driver.findElement(By.className("qty"));
             quantityField.clear();
             quantityField.sendKeys("2");
@@ -81,7 +82,7 @@ public class CartTest_BotPattern extends BaseTests{
 
         @Test
         public void add_product_to_cart_should_section_show_correct_subtotal_price() {
-            driver.get(baseUrl + "/product/" + historyOfAstronomySlug);
+            driver.get(baseURL + "/product/" + historyOfAstronomySlug);
             WebElement addToCartButton = driver.findElement(addToCartButtonLocator);
             addToCartButton.click();
             driver.findElement(By.className("wc-block-mini-cart__button")).click();
@@ -92,7 +93,7 @@ public class CartTest_BotPattern extends BaseTests{
         @Test
         @DisplayName("Adding one product to cart should show that product's price in header cart icon.")
         public void add_product_to_cart_should_header_show_product_price() {
-            driver.get(baseUrl + "/product/" + historyOfAstronomySlug);
+            driver.get(baseURL + "/product/" + historyOfAstronomySlug);
             WebElement addToCartButton = driver.findElement(addToCartButtonLocator);
             addToCartButton.click();
             WebElement miniCartPrice = wait.until(driver -> driver.findElement(By.className("wc-block-mini-cart__amount")));
