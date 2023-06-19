@@ -1,4 +1,4 @@
-package TestelkaLessonTests.PageObjectModel.Other;
+package TestelkaLessonTests.PageObjectModel.other;
 
 import TestelkaLessonTests.PageObjectModel.Tests.BaseTests;
 import org.junit.jupiter.api.Assertions;
