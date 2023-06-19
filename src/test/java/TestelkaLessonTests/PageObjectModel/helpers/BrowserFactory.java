@@ -67,7 +67,7 @@ public class BrowserFactory {
     }
 
     private WebDriver createEdgeInstance(ConfigurationReader configuration) {
-        EdgeOptions options = new EdgeOptions();
+        EdgeOptions options = new EdgeOptions().addArguments("--remote-allow-origins=*");
         if (configuration.isHeadless()) options.addArguments("--headless=new");
 
         switch (configuration.getTarget()) {
@@ -82,6 +82,7 @@ public class BrowserFactory {
     }
 
     private RemoteWebDriver createRemoteInstance(ConfigurationReader configuration, MutableCapabilities options) {
+        options.setCapability("browserVersion", configuration.getBrowserVersion());
         try {
             return new RemoteWebDriver(new URL(configuration.getRemoteUrl()), options);
         } catch (MalformedURLException e) {

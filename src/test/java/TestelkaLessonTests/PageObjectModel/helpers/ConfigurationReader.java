@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigurationReader {
+    private final String propertyNotSpecifiedMessage = "is not specified in the Configuration.properties file.";
     private String browser;
     private String baseURL;
     private String headless;
     private String waitInSeconds;
     private String target;
     private String remoteUrl;
+    private String browserVersion;
 
     public ConfigurationReader() {
         String configurationPath = "src/test/resources/configuration.properties";
@@ -38,33 +40,38 @@ public class ConfigurationReader {
         waitInSeconds = properties.getProperty("waitInSeconds");
         target = properties.getProperty("target");
         remoteUrl = properties.getProperty("remoteUrl");
+        browserVersion = properties.getProperty("browserVersion");
     }
 
     public String getBrowser() {
         if (!browser.isEmpty()) return browser;
-        else throw new RuntimeException("\"browser\" is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"browser\" " + propertyNotSpecifiedMessage);
     }
     public boolean isHeadless() {
         if (!headless.isEmpty()) return Boolean.parseBoolean(headless);
-        else throw new RuntimeException("\"headless\" is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"headless\" " + propertyNotSpecifiedMessage);
     }
     public String getBaseUrl() {
         if (!baseURL.isEmpty()) return baseURL;
-        else throw new RuntimeException("\"baseUrl\"is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"baseUrl\" " + propertyNotSpecifiedMessage);
     }
 
     public int getWaitInSeconds() {
         if (!waitInSeconds.isEmpty()) return Integer.parseInt(waitInSeconds);
-        else throw new RuntimeException("\"waitInSeconds\"is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"waitInSeconds\" " + propertyNotSpecifiedMessage);
     }
 
     public String getTarget() {
         if (!target.isEmpty()) return target;
-        else throw new RuntimeException("\"target\"is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"target\" " + propertyNotSpecifiedMessage);
     }
 
     public String getRemoteUrl() {
         if (!remoteUrl.isEmpty()) return remoteUrl;
-        else throw new RuntimeException("\"remoteUrl\"is not specified in the Configuration.properties file.");
+        else throw new RuntimeException("\"remoteUrl\" " + propertyNotSpecifiedMessage);
+    }
+    public String getBrowserVersion() {
+        if (!browserVersion.isEmpty()) return browserVersion;
+        else throw new RuntimeException("\"browserVersion\" " + propertyNotSpecifiedMessage);
     }
 }

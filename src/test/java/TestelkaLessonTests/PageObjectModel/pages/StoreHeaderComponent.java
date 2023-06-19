@@ -1,6 +1,6 @@
 package TestelkaLessonTests.PageObjectModel.pages;
 
-import TestelkaLessonTests.PageObjectModel.Pages.WishlistPage;
+import TestelkaLessonTests.PageObjectModel.pages.WishlistPage;
 import TestelkaLessonTests.PageObjectModel.helpers.Browser;
 import org.openqa.selenium.By;
 

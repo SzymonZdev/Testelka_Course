@@ -1,7 +1,6 @@
-package TestelkaLessonTests.PageObjectModel.Pages;
+package TestelkaLessonTests.PageObjectModel.pages;
 
 import TestelkaLessonTests.PageObjectModel.helpers.Browser;
-import TestelkaLessonTests.PageObjectModel.pages.BasePage;
 import org.openqa.selenium.By;
 
 public class WishlistPage  extends BasePage {

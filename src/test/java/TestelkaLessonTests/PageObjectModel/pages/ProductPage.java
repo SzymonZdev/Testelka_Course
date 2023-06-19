@@ -1,5 +1,6 @@
 package TestelkaLessonTests.PageObjectModel.pages;
 
+import TestelkaLessonTests.PageObjectModel.CartPage;
 import TestelkaLessonTests.PageObjectModel.helpers.Browser;
 import TestelkaLessonTests.PageObjectModel.pages.BasePage;
 import TestelkaLessonTests.PageObjectModel.pages.StoreHeaderComponent;
@@ -28,9 +29,9 @@ public class ProductPage extends BasePage {
         return this;
     }
 
-    public TestelkaLessonTests.PageObjectModel.CartPage goToCart() {
+    public CartPage goToCart() {
         driver.findElement(goToCart).click();
-        return new TestelkaLessonTests.PageObjectModel.CartPage(browser);
+        return new CartPage(browser);
     }
 
     public ProductPage addToWishlist() {
