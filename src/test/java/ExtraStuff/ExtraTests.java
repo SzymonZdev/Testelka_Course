@@ -2,16 +2,26 @@ package ExtraStuff;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
+import org.openqa.selenium.*;
+import org.openqa.selenium.print.PageMargin;
+import org.openqa.selenium.print.PageSize;
+import org.openqa.selenium.print.PrintOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 public class ExtraTests extends BaseTest {
 
@@ -74,6 +84,82 @@ public class ExtraTests extends BaseTest {
 
     @Test
     public void dropdownSelectsTest() {
+        driver.get("https://fakestore.testelka.pl/lista-rozwijana/");
+        WebElement selectElement = driver.findElement(By.cssSelector("select#flavors"));
 
+        Select select = new Select(selectElement);
+        select.selectByIndex(3);
+        // select.selectByVisibleText("marakuja");
+        // select.selectByValue("passion-fruit");
+
+        Assertions.assertEquals(4, select.getOptions().size());
+    }
+
+    @Test
+    public void multiple_choice_select_with_selected_options_example() {
+        driver.get("https://fakestore.testelka.pl/lista-rozwijana/");
+        WebElement selectElement = driver.findElement(By.cssSelector("select#flavors-multiple-selected"));
+        Select select = new Select(selectElement);
+
+        // select.deselectByIndex(1);
+        select.deselectByValue("chocolate");
+        // select.deselectByVisibleText("czekoladowy");
+
+        Assertions.assertEquals(1, select.getAllSelectedOptions().size());
+    }
+
+    @Test
+    public void printPageExample() {
+        driver.get(baseURL);
+        PrintsPage printer = (PrintsPage) driver;
+        PrintOptions printOptions = new PrintOptions();
+        printOptions.setPageSize(new PageSize(27.94, 21.59));
+        printOptions.setPageMargin(new PageMargin(0, 0, 0, 0));
+        printOptions.setBackground(true);
+        printOptions.setScale(0.50);
+
+
+        Pdf pdf = printer.print(printOptions);
+        String content = pdf.getContent();
+        byte[] decodedBytes = Base64.getDecoder().decode(content);
+        try {
+            Files.write(Paths.get("./target/output_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".pdf"), decodedBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred while writing the PDF file: " + e);
+        }
+    }
+
+    @Test
+    public void screenshotExample() {
+        driver.get(baseURL);
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        Path destinationPath = Paths.get("./target/screenshot_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".png");
+        try {
+            Files.copy(screenshot.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred while writing the screenshot file: " + e);
+        }
+    }
+
+    @Test
+    public void elementScreenshotExample() {
+        driver.get(baseURL);
+        WebElement element = driver.findElement(By.cssSelector(".wc-block-grid__product-link"));
+
+        File screenshot = element.getScreenshotAs(OutputType.FILE);
+        Path destinationPath = Paths.get("./target/screenshot_of_element_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".png");
+        try {
+            Files.copy(screenshot.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred while writing the screenshot file: " + e);
+        }
+    }
+
+    @Test
+    public void failed_test_for_screenshots() {
+        driver.get(baseURL);
+        WebElement element = driver.findElement(By.cssSelector(".main-title"));
+
+        Assertions.assertEquals("Testium Appium", element.getText());
     }
 }
