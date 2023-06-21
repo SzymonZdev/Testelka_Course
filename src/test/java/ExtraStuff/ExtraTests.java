@@ -3,6 +3,9 @@ package ExtraStuff;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.HasDevTools;
+import org.openqa.selenium.devtools.v85.log.Log;
 import org.openqa.selenium.print.PageMargin;
 import org.openqa.selenium.print.PageSize;
 import org.openqa.selenium.print.PrintOptions;
@@ -161,5 +164,46 @@ public class ExtraTests extends BaseTest {
         WebElement element = driver.findElement(By.cssSelector(".main-title"));
 
         Assertions.assertEquals("Testium Appium", element.getText());
+    }
+
+    @Test
+    public void js_execution_test() {
+        driver.get(baseURL);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        WebElement generatePressLink = driver.findElement(By.cssSelector("a[href='https://generatepress.com']"));
+        js.executeScript("arguments[0].scrollIntoView();", generatePressLink);
+    }
+
+    @Test
+    public void another_js_execution_test() {
+        driver.get(baseURL);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        WebElement product_link = driver.findElement(By.cssSelector("div.wc-block-grid__product-title"));
+        String product_link_text = js.executeScript("return arguments[0].innerText;", product_link).toString();
+        System.out.println(product_link_text);
+    }
+
+    @Test
+    public void console_logs_test() {
+        DevTools devTools = ((HasDevTools) driver).getDevTools();
+        devTools.createSession();
+        devTools.send(Log.enable());
+        devTools.getDomains().events().addConsoleListener(
+                log -> System.out.println(
+                        log.getTimestamp() + " " + log.getType() + " " + log.getMessages()
+                    )
+        );
+        driver.get("https://fakestore.testelka.pl/console-log-events");
+    }
+
+    @Test
+    public void javascript_exceptions_test() {
+        DevTools devTools = ((HasDevTools) driver).getDevTools();
+        devTools.createSession();
+        devTools.getDomains().events().addJavascriptExceptionListener(System.out::println);
+        driver.get("https://fakestore.testelka.pl/javascript-exceptions/");
+        driver.findElement(By.id("button-1")).click();
     }
 }
