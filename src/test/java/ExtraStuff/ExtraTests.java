@@ -3,6 +3,7 @@ package ExtraStuff;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -57,5 +58,22 @@ public class ExtraTests extends BaseTest {
         Assertions.assertEquals("File size: 2 MB", driver.findElement(By.cssSelector(".file-size")).getText());
 
         fileUrl = driver.getCurrentUrl();
+    }
+
+    @Test
+    public void cookieTest() {
+        driver.get(baseURL + "/product/calculus-made-easy-by-silvanus-p-thompson/");
+        driver.findElement(By.cssSelector("[name='add-to-cart']")).click();
+        int noOfCookies = driver.manage().getCookies().size();
+
+        Cookie itemsInCartCookie = driver.manage().getCookieNamed("woocommerce_items_in_cart");
+        driver.manage().deleteCookie(itemsInCartCookie);
+
+        Assertions.assertEquals(noOfCookies-1, driver.manage().getCookies().size());
+    }
+
+    @Test
+    public void dropdownSelectsTest() {
+
     }
 }
