@@ -5,10 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.HasDevTools;
+import org.openqa.selenium.devtools.NetworkInterceptor;
+import org.openqa.selenium.devtools.events.DomMutationEvent;
 import org.openqa.selenium.devtools.v85.log.Log;
+import org.openqa.selenium.logging.HasLogEvents;
 import org.openqa.selenium.print.PageMargin;
 import org.openqa.selenium.print.PageSize;
 import org.openqa.selenium.print.PrintOptions;
+import org.openqa.selenium.remote.http.HttpResponse;
+import org.openqa.selenium.remote.http.Route;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -25,6 +30,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.openqa.selenium.devtools.events.CdpEventTypes.domMutation;
+import static org.openqa.selenium.remote.http.Contents.utf8String;
 
 public class ExtraTests extends BaseTest {
 
@@ -205,5 +216,46 @@ public class ExtraTests extends BaseTest {
         devTools.getDomains().events().addJavascriptExceptionListener(System.out::println);
         driver.get("https://fakestore.testelka.pl/javascript-exceptions/");
         driver.findElement(By.id("button-1")).click();
+    }
+
+
+
+    @Test   // Used to catch a DOM change through an AtomicReference (thread-safe, set when we log a dom change)
+    public void dom_changes_test() {
+        driver.get("https://fakestore.testelka.pl/zmiany-w-dom/");
+        AtomicReference<DomMutationEvent> seen = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        ((HasLogEvents) driver).onLogEvent(domMutation(mutation -> {
+            seen.set(mutation);
+            latch.countDown();
+        }));
+        WebElement secondButton = driver.findElement(By.cssSelector("#second-button"));
+        secondButton.click();
+
+        Assertions.assertAll(
+                () -> Assertions.assertTrue(latch.await(10, TimeUnit.SECONDS)),
+                () -> Assertions.assertEquals("class", seen.get().getAttributeName()),
+                () -> Assertions.assertEquals("primary-button", seen.get().getCurrentValue())
+        );
+    }
+
+    @Test   // Used to intercept network traffic, this test changes all server-side loaded css files and changes their content
+    public void network_traffic_test() {
+        try (NetworkInterceptor networkInterceptor = new NetworkInterceptor(driver,
+                Route.matching(req -> req.getUri().contains(".css"))
+                        .to(() -> req -> new HttpResponse().setStatus(200)
+                                .setHeader("Content-Type", "text/css")
+                                .setContent(utf8String("Nie lubię CSSa")))))
+        {
+            driver.get("https://fakestore.testelka.pl");
+        }
+    }
+
+    @Test   // Attaches an authenticator to the driver, which is then used to open sites (used instead of passing in site address (<username>:<password>))
+    public void basic_auth_test() {
+        ((HasAuthentication)driver).register(UsernameAndPassword.of("harrypotter", "Alohomora"));
+        driver.get("https://fakestore.testelka.pl/wp-content/uploads/protected/cos.html");
+
     }
 }
