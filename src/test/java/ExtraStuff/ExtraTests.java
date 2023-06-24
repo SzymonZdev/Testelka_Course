@@ -3,11 +3,13 @@ package ExtraStuff;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.HasDevTools;
 import org.openqa.selenium.devtools.NetworkInterceptor;
 import org.openqa.selenium.devtools.events.DomMutationEvent;
 import org.openqa.selenium.devtools.v85.log.Log;
+import org.openqa.selenium.html5.LocalStorage;
 import org.openqa.selenium.logging.HasLogEvents;
 import org.openqa.selenium.print.PageMargin;
 import org.openqa.selenium.print.PageSize;
@@ -30,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -257,5 +260,82 @@ public class ExtraTests extends BaseTest {
         ((HasAuthentication)driver).register(UsernameAndPassword.of("harrypotter", "Alohomora"));
         driver.get("https://fakestore.testelka.pl/wp-content/uploads/protected/cos.html");
 
+    }
+
+    @Test
+    public void webStorage_chrome_test() {
+        driver.get("https://airly.org/map/pl/#50.0626789849,19.9326583871");
+        LocalStorage storage = ((ChromeDriver)driver).getLocalStorage();
+        String map = storage.getItem("persist:map");
+        storage.removeItem("persist:map");
+        storage.setItem("some key", "some value");
+        Set<String> keys = storage.keySet();
+        int size = storage.size();
+        storage.clear();
+    }
+
+    @Test
+    public void webStorage_js_test() {
+        driver.get("https://airly.eu/map/pl/#50.06237,19.93898");
+        String key = "persist:map";
+        String value = (String) ((JavascriptExecutor) driver)
+                .executeScript("return localStorage.getItem(arguments[0]);", key);
+        ((JavascriptExecutor) driver)
+                .executeScript("localStorage.setItem(arguments[0], arguments[1]);", "some key", "some value");
+        ((JavascriptExecutor) driver)
+                .executeScript("localStorage.removeItem(arguments[0]);", key);
+        String indexValue = (String) ((JavascriptExecutor) driver)
+                .executeScript("return localStorage.key(arguments[0]);", 2);
+        long size = (long) ((JavascriptExecutor) driver)
+                .executeScript("return localStorage.length;");
+        ((JavascriptExecutor) driver).executeScript("localStorage.clear();");
+    }
+
+    @Test
+    public void alert_test() {
+        driver.get("https://fakestore.testelka.pl/alerty");
+        driver.findElement(By.cssSelector("[onclick='alertFunction()']")).click();
+        Alert alert = driver.switchTo().alert();
+
+        Assertions.assertEquals("To jest po prostu alert", alert.getText());
+        //    alert.accept();
+    }
+
+    @Test
+    public void confirm_alert_test() {
+        driver.get("https://fakestore.testelka.pl/alerty");
+        driver.findElement(By.cssSelector("[onclick='confirmFunction()']")).click();
+        Alert alert = driver.switchTo().alert();
+        // Accept the alert
+        // alert.accept();
+        //  OR dismiss the alert
+        alert.dismiss();
+        String message = driver.findElement(By.cssSelector("#demo")).getText();
+
+
+        // Assertions.assertEquals("Wybrana opcja to OK!", message);
+        // OR
+        Assertions.assertEquals("Wybrana opcja to Cancel!", message);
+    }
+
+    @Test
+    public void prompt_test() {
+        driver.get("https://fakestore.testelka.pl/alerty");
+        driver.findElement(By.cssSelector("[onclick='promptFunction()']")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.sendKeys("Szymon");
+        alert.accept();
+        String message = driver.findElement(By.cssSelector("#prompt-demo")).getText();
+
+        Assertions.assertEquals("Cześć Szymon! Jak leci?", message);
+    }
+    @Test
+    public void delayed_prompt_test() {
+        driver.get("https://fakestore.testelka.pl/alerty");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        driver.findElement(By.cssSelector("[onclick='delayedAlertFunction()']")).click();
+        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+        Assertions.assertEquals("Miałem mały poślizg", alert.getText());
     }
 }
