@@ -10,12 +10,14 @@ import org.openqa.selenium.devtools.NetworkInterceptor;
 import org.openqa.selenium.devtools.events.DomMutationEvent;
 import org.openqa.selenium.devtools.v85.log.Log;
 import org.openqa.selenium.html5.LocalStorage;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.logging.HasLogEvents;
 import org.openqa.selenium.print.PageMargin;
 import org.openqa.selenium.print.PageSize;
 import org.openqa.selenium.print.PrintOptions;
 import org.openqa.selenium.remote.http.HttpResponse;
 import org.openqa.selenium.remote.http.Route;
+import org.openqa.selenium.support.locators.RelativeLocator;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -32,6 +34,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -337,5 +340,67 @@ public class ExtraTests extends BaseTest {
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
 
         Assertions.assertEquals("Miałem mały poślizg", alert.getText());
+    }
+
+    @Test
+    public void multiple_windows_test() {
+        driver.get(baseURL + "/product/calculus-made-easy-by-silvanus-p-thompson/");
+        String originalWindow = driver.getWindowHandle();
+        driver.switchTo().newWindow(WindowType.TAB);
+        // driver.switchTo().newWindow(WindowType.WINDOW);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+        String otherWindow = driver.getWindowHandle();
+        driver.get(baseURL);
+        driver.switchTo().window(originalWindow);
+        driver.get(baseURL + "/wishlist/");
+        driver.switchTo().window(otherWindow);
+        driver.close();
+    }
+
+    @Test   // using the has() pseudo-class to find an element based on child element
+    public void has_pseudo_test() {
+        driver.get(baseURL + "/cart/");
+        // Finding a TR element based on a child element, which has the product ID attribute
+        WebElement element = driver.findElement(By.cssSelector("tr:has(a[data-product_id='12'])"));
+    }
+
+    @Test   // using the relative locator, finding an element by referencing another
+    public void relative_locator_test() {
+        driver.get(baseURL + "/product/history-of-astronomy-by-george-forbes/");
+        // Finding a TR element based on a child element, which has the product ID attribute
+        WebElement element = driver.findElement(By.cssSelector(")"));
+        By quantity = By.cssSelector("input[name='quantity]");
+        // Using the relative locator to select the button by referencing the previously found element
+        By addToCart = RelativeLocator.with(By.cssSelector("button")).toRightOf(quantity);
+    }
+
+    @Test
+    public void action_api_test_click_with_button() {
+        driver.get("https://fakestore.testelka.pl/select/");
+        List<WebElement> items = driver.findElements(By.cssSelector(".ui-selectee"));
+        Actions action = new Actions(driver)
+                .keyDown(Keys.CONTROL)
+                .click(items.get(0))
+                .click(items.get(3))
+                .click(items.get(4))
+                .keyUp(Keys.CONTROL);
+        action.perform();
+        List<WebElement> selectedItems = driver.findElements(By.cssSelector(".ui-selected"));
+
+        Assertions.assertEquals(3, selectedItems.size(), "Number of selected items is not what was expected.");
+    }
+
+    @Test
+    public void action_api_test_drag_and_drop() {
+        driver.get("https://fakestore.testelka.pl/actions/");
+        Actions actions = new Actions(driver);
+        WebElement draggable = driver.findElement(By.cssSelector("#draggable"));
+        WebElement droppable = driver.findElement(By.cssSelector("#droppable"));
+        //actions.clickAndHold(draggable).moveToElement(droppable, 74, 74).release().perform();
+        actions.dragAndDrop(draggable, droppable);
+        actions.perform();
+
+        Assertions.assertEquals("Dropped!", droppable.getText(), "Message in the droppable box was not changed. Was the element dropped?");
     }
 }
